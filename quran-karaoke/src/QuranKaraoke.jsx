@@ -20,11 +20,31 @@ export default function QuranKaraoke() {
 
   const audioRef = useRef(null);
 
-  // ⭐ new: refs for each ayah to auto-scroll into view
+  // ⭐ refs for each ayah to auto-scroll into view
   const ayahRefs = useRef([]);
 
   const selectedSurah = surahs[selectedSurahIndex] || null;
   const ayahs = selectedSurah?.ayahs || [];
+
+  const reciterSelectStyle = {
+    padding: "6px 14px",
+    fontSize: 13,
+    borderRadius: 12,
+    border: "1px solid #3b3b3b",
+    background: "#111",
+    color: "#fff",
+    outline: "none",
+    cursor: "pointer",
+    boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
+    appearance: "none",
+  };
+
+  const reciterOptionStyle = {
+    backgroundColor: "#111",
+    color: "#fff",
+    padding: "10px",
+  };
+
 
   // Load surahs initially + whenever reciter changes
   useEffect(() => {
@@ -125,7 +145,7 @@ export default function QuranKaraoke() {
     setIsUserTurn(false);
 
     audio.src = ayah.audioUrl;
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
   }
 
   function handleAudioEnded() {
@@ -170,7 +190,7 @@ export default function QuranKaraoke() {
     setCurrentAyahIndex(0);
 
     audio.src = selectedSurah.fullAudioUrl;
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
   }
 
   // Practice mode: start from ayah 0
@@ -243,7 +263,7 @@ export default function QuranKaraoke() {
     >
       {/* HEADER */}
       <h1 style={{ textAlign: "center", marginBottom: 4, fontSize: "2.7rem" }}>
-        Qur&apos;an Practice
+        Tajwīd Practice
       </h1>
       <p
         style={{
@@ -253,35 +273,57 @@ export default function QuranKaraoke() {
           opacity: 0.8
         }}
       >
-        Learn and understand: full surah with translation and transliteration
-        <br />
-        Practice: ayah by ayah
+        Learn, recite, and understand the Qur’an ayah by ayah.
       </p>
 
-      {/* RECITER ROW */}
-      <div
-        style={{
-          marginTop: 12,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 6,
-          fontSize: 14
-        }}
-      >
-        <span>Reciter:</span>
-        <select
-          value={reciter}
-          onChange={(e) => setReciter(e.target.value)}
-          style={{ padding: "4px 8px", fontSize: 14 }}
-        >
-          <option value="1">Mishary Al-Afasy</option>
-          <option value="2">Abu Bakr Al Shatri</option>
-          <option value="3">Nasser Al Qatami</option>
-          <option value="4">Yasser Al-Dosari</option>
-          <option value="5">Hani Ar Rifai</option>
-        </select>
-      </div>
+{/* RECITER ROW */}
+<div
+  style={{
+    marginTop: 12,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    fontSize: 14
+  }}
+>
+  <span style={{ opacity: 0.85 }}>Reciter:</span>
+<select
+  value={reciter}
+  onChange={(e) => setReciter(e.target.value)}
+  style={{
+    padding: "6px 14px",
+    fontSize: 13,
+    borderRadius: 9999,
+    border: "1px solid #3b3b3b",
+    background: "#111",
+    color: "#fff",
+    outline: "none",
+    cursor: "pointer",
+    boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
+    appearance: "none",
+    WebkitAppearance: "none",
+    MozAppearance: "none",
+    backgroundImage:
+      "linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%)",
+    backgroundPosition: "calc(100% - 14px) 50%, calc(100% - 9px) 50%",
+    backgroundSize: "6px 6px, 6px 6px",
+    backgroundRepeat: "no-repeat",
+    paddingRight: 28,
+  }}
+>
+  <option value="1" style={reciterOptionStyle}>Mishary Al-Afasy</option>
+  <option value="2" style={reciterOptionStyle}>Abu Bakr Al Shatri</option>
+  <option value="3" style={reciterOptionStyle}>Nasser Al Qatami</option>
+  <option value="4" style={reciterOptionStyle}>Yasser Al-Dosari</option>
+  <option value="5" style={reciterOptionStyle}>Hani Ar Rifai</option>
+</select>
+
+
+
+</div>
+
+
 
       {/* SURAH NAV BAR */}
       <div
@@ -400,7 +442,7 @@ export default function QuranKaraoke() {
           return (
             <div
               key={ayah.number}
-              ref={(el) => (ayahRefs.current[idx] = el)}  // ⭐ attach ref
+              ref={(el) => (ayahRefs.current[idx] = el)} // ⭐ attach ref
               style={{
                 padding: "8px 10px",
                 marginBottom: 6,
@@ -412,7 +454,25 @@ export default function QuranKaraoke() {
                 textAlign: "right"
               }}
             >
+              {/* Arabic */}
               <div style={{ fontSize: "1.4rem" }}>{ayah.text_ar}</div>
+
+              {/* ⭐ Transliteration (NEW) */}
+              {ayah.transliteration && (
+                <div
+                  style={{
+                    fontSize: "0.85rem",
+                    opacity: 0.9,
+                    textAlign: "left",
+                    marginTop: 4,
+                    fontStyle: "italic"
+                  }}
+                >
+                  {ayah.transliteration}
+                </div>
+              )}
+
+              {/* English translation */}
               {ayah.english && (
                 <div
                   style={{
