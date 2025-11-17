@@ -353,321 +353,339 @@ export default function QuranKaraoke() {
   return (
     <div
       style={{
-        maxWidth: 640,
-        margin: "0 auto",
-        padding: 24,
-        fontFamily: "system-ui, sans-serif",
+        minHeight: "100vh",
+        background: "#242424",
+        color: "#fff",
+        padding: "40px 16px",
+        boxSizing: "border-box",
       }}
     >
-      {/* HEADER */}
-      <h1 style={{ textAlign: "center", marginBottom: 4, fontSize: "2.7rem" }}>
-        Tajwīd Practice
-      </h1>
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: 0,
-          fontSize: 14,
-          opacity: 0.8,
-        }}
-      >
-        Learn, recite, and understand the Qur’an ayah by ayah.
-      </p>
-
-      {/* RECITER ROW */}
       <div
         style={{
-          marginTop: 12,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 8,
-          fontSize: 14,
+          maxWidth: 640,
+          margin: "0 auto",
+          padding: 24,
+          fontFamily: "system-ui, sans-serif",
         }}
       >
-        <span style={{ opacity: 0.85 }}>Reciter:</span>
-        <select
-          value={reciter}
-          onChange={(e) => setReciter(e.target.value)}
+        {/* HEADER */}
+        <h1
           style={{
-            padding: "6px 14px",
-            fontSize: 13,
-            borderRadius: 9999,
-            border: "1px solid #3b3b3b",
-            background: "#111",
-            color: "#fff",
-            outline: "none",
-            cursor: "pointer",
-            boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
-            appearance: "none",
-            WebkitAppearance: "none",
-            MozAppearance: "none",
-            backgroundImage:
-              "linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%)",
-            backgroundPosition: "calc(100% - 14px) 50%, calc(100% - 9px) 50%",
-            backgroundSize: "6px 6px, 6px 6px",
-            backgroundRepeat: "no-repeat",
-            paddingRight: 28,
+            textAlign: "center",
+            marginBottom: 4,
+            fontSize: "2.7rem",
           }}
         >
-          <option value="1" style={reciterOptionStyle}>
-            Mishary Al-Afasy
-          </option>
-          <option value="2" style={reciterOptionStyle}>
-            Abu Bakr Al Shatri
-          </option>
-          <option value="3" style={reciterOptionStyle}>
-            Nasser Al Qatami
-          </option>
-          <option value="4" style={reciterOptionStyle}>
-            Yasser Al-Dosari
-          </option>
-          <option value="5" style={reciterOptionStyle}>
-            Hani Ar Rifai
-          </option>
-        </select>
-      </div>
-
-      {/* SURAH NAV BAR */}
-      <div
-        style={{
-          marginTop: 20,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        <button
-          onClick={goToPreviousSurah}
-          disabled={selectedSurahIndex === 0}
-          style={{ minWidth: 110 }}
+          Tajwīd Practice
+        </h1>
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: 0,
+            fontSize: 14,
+            opacity: 0.8,
+          }}
         >
-          ← Previous
-        </button>
+          Learn, recite, and understand the Qur’an ayah by ayah.
+        </p>
 
+        {/* RECITER ROW */}
         <div
           style={{
-            flex: 1,
-            textAlign: "center",
-            cursor: "pointer",
-            padding: "4px 0",
+            marginTop: 12,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 14,
           }}
-          onClick={() => setSurahPickerOpen((open) => !open)}
         >
-          <div style={{ fontSize: "1.9rem" }}>{selectedSurah.arabicName}</div>
-          <div style={{ fontSize: "0.95rem", opacity: 0.8 }}>
-            Surah {selectedSurah.surahNumber}: {selectedSurah.name}
-          </div>
-          <div
+          <span style={{ opacity: 0.85 }}>Reciter:</span>
+          <select
+            value={reciter}
+            onChange={(e) => setReciter(e.target.value)}
             style={{
-              marginTop: 2,
-              fontSize: 11,
-              opacity: 0.6,
-              color: "#5574e4ff",
+              padding: "6px 14px",
+              fontSize: 13,
+              borderRadius: 9999,
+              border: "1px solid #3b3b3b",
+              background: "#111",
+              color: "#fff",
+              outline: "none",
+              cursor: "pointer",
+              boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
+              appearance: "none",
+              WebkitAppearance: "none",
+              MozAppearance: "none",
+              backgroundImage:
+                "linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%)",
+              backgroundPosition: "calc(100% - 14px) 50%, calc(100% - 9px) 50%",
+              backgroundSize: "6px 6px, 6px 6px",
+              backgroundRepeat: "no-repeat",
+              paddingRight: 28,
             }}
           >
-            Click to choose a surah
-          </div>
+            <option value="1" style={reciterOptionStyle}>
+              Mishary Al-Afasy
+            </option>
+            <option value="2" style={reciterOptionStyle}>
+              Abu Bakr Al Shatri
+            </option>
+            <option value="3" style={reciterOptionStyle}>
+              Nasser Al Qatami
+            </option>
+            <option value="4" style={reciterOptionStyle}>
+              Yasser Al-Dosari
+            </option>
+            <option value="5" style={reciterOptionStyle}>
+              Hani Ar Rifai
+            </option>
+          </select>
         </div>
 
-        <button
-          onClick={goToNextSurah}
-          disabled={selectedSurahIndex === surahs.length - 1}
-          style={{ minWidth: 110 }}
-        >
-          Next →
-        </button>
-      </div>
-
-      {/* SURAH PICKER DROPDOWN */}
-      {surahPickerOpen && (
+        {/* SURAH NAV BAR */}
         <div
           style={{
-            marginTop: 10,
-            background: "#151515",
-            borderRadius: 10,
-            border: "1px solid #333",
-            maxHeight: 260,
-            overflowY: "auto",
-            padding: 8,
+            marginTop: 20,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
           }}
         >
-          {surahs.map((s, idx) => (
-            <button
-              key={s.surahNumber}
-              onClick={() => handlePickSurah(idx)}
-              style={{
-                width: "100%",
-                padding: "6px 10px",
-                borderRadius: 8,
-                border: "none",
-                background:
-                  idx === selectedSurahIndex ? "#24315f" : "transparent",
-                color: "#fff",
-                cursor: "pointer",
-                fontSize: 13,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                textAlign: "left",
-              }}
-            >
-              <span>
-                {s.surahNumber}. {s.name}
-              </span>
-              <span style={{ fontSize: "1.1rem", opacity: 0.9 }}>
-                {s.arabicName}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* CONTROLS CARD */}
-      <div
-        style={{
-          marginTop: 20,
-          padding: 12,
-          borderRadius: 10,
-          background: "#151515",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        {/* Mode toggle */}
-        <div style={{ display: "flex", gap: 8 }}>
           <button
-            onClick={() => setMode("learning")}
-            disabled={mode === "learning"}
+            onClick={goToPreviousSurah}
+            disabled={selectedSurahIndex === 0}
+            style={{ minWidth: 110 }}
           >
-            Learning Mode
-          </button>
-          <button
-            onClick={() => setMode("practice")}
-            disabled={mode === "practice"}
-          >
-            Practice Mode
+            ← Previous
           </button>
 
-          <ModeInfoIcon />
-        </div>
-
-        {/* Play controls (depend on mode) */}
-        <div style={{ display: "flex", gap: 8 }}>
-          {mode === "learning" && (
-            <>
-              <button onClick={startLearning}>Play Surah</button>
-              <button onClick={pauseAudio}>Pause</button>
-            </>
-          )}
-
-          {mode === "practice" && (
-            <>
-              <button onClick={startPractice}>Start Practice</button>
-              {isUserTurn && (
-                <button onClick={nextAyahPractice}>Next Ayah</button>
-              )}
-            </>
-          )}
-        </div>
-
-        {mode === "practice" && isUserTurn && (
-          <p style={{ margin: 0, fontSize: 13, opacity: 0.85 }}>
-            Your turn: recite this ayah, then press &quot;Next Ayah&quot;.
-          </p>
-        )}
-      </div>
-
-      {/* AUDIO ELEMENT */}
-      <audio
-        ref={audioRef}
-        onEnded={handleAudioEnded}
-        onTimeUpdate={handleTimeUpdate}
-        style={{ display: "none" }}
-      />
-
-      {/* AYAH PANEL */}
-      <div
-        style={{
-          marginTop: 24,
-          padding: 16,
-          borderRadius: 10,
-          background: "#181818",
-          maxHeight: 420,
-          overflowY: "auto",
-          boxSizing: "border-box",
-        }}
-      >
-        {ayahs.map((ayah, idx) => {
-          const highlightInLearning =
-            mode === "learning" && idx === currentAyahIndex;
-          const highlightInPractice =
-            mode === "practice" && idx === currentAyahIndex;
-          const isCurrent = highlightInLearning || highlightInPractice;
-
-          return (
-            <div
-              key={ayah.number}
-              ref={(el) => (ayahRefs.current[idx] = el)}
-              onClick={() => handleAyahClick(idx)}
-              onMouseEnter={() => setHoveredAyahIndex(idx)}
-              onMouseLeave={() => setHoveredAyahIndex(null)}
-              style={{
-                padding: "8px 10px",
-                marginBottom: 6,
-                borderRadius: 8,
-                cursor: "pointer",
-                background: isCurrent
-                  ? "#24315f"
-                  : hoveredAyahIndex === idx
-                  ? "#202637"
-                  : "transparent",
-                border: isCurrent
-                  ? "1px solid #3f5bff"
-                  : hoveredAyahIndex === idx
-                  ? "1px solid #333a55"
-                  : "1px solid transparent",
-                textAlign: "right",
-                transition:
-                  "background 0.15s ease, border-color 0.15s ease, transform 0.1s ease",
-              }}
-            >
-              {/* Arabic */}
-              <div style={{ fontSize: "1.4rem" }}>{ayah.text_ar}</div>
-
-              {/* Transliteration */}
-              {ayah.transliteration && (
-                <div
-                  style={{
-                    fontSize: "0.85rem",
-                    opacity: 0.9,
-                    textAlign: "left",
-                    marginTop: 4,
-                    fontStyle: "italic",
-                  }}
-                >
-                  {ayah.transliteration}
-                </div>
-              )}
-
-              {/* English translation */}
-              {ayah.english && (
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    opacity: 0.8,
-                    textAlign: "left",
-                    marginTop: 4,
-                  }}
-                >
-                  {ayah.number}. {ayah.english}
-                </div>
-              )}
+          <div
+            style={{
+              flex: 1,
+              textAlign: "center",
+              cursor: "pointer",
+              padding: "4px 0",
+            }}
+            onClick={() => setSurahPickerOpen((open) => !open)}
+          >
+            <div style={{ fontSize: "1.9rem" }}>
+              {selectedSurah.arabicName}
             </div>
-          );
-        })}
+            <div style={{ fontSize: "0.95rem", opacity: 0.8 }}>
+              Surah {selectedSurah.surahNumber}: {selectedSurah.name}
+            </div>
+            <div
+              style={{
+                marginTop: 2,
+                fontSize: 11,
+                opacity: 0.6,
+                color: "#5574e4ff",
+              }}
+            >
+              Click to choose a surah
+            </div>
+          </div>
+
+          <button
+            onClick={goToNextSurah}
+            disabled={selectedSurahIndex === surahs.length - 1}
+            style={{ minWidth: 110 }}
+          >
+            Next →
+          </button>
+        </div>
+
+        {/* SURAH PICKER DROPDOWN */}
+        {surahPickerOpen && (
+          <div
+            style={{
+              marginTop: 10,
+              background: "#151515",
+              borderRadius: 10,
+              border: "1px solid #333",
+              maxHeight: 260,
+              overflowY: "auto",
+              padding: 8,
+            }}
+          >
+            {surahs.map((s, idx) => (
+              <button
+                key={s.surahNumber}
+                onClick={() => handlePickSurah(idx)}
+                style={{
+                  width: "100%",
+                  padding: "6px 10px",
+                  borderRadius: 8,
+                  border: "none",
+                  background:
+                    idx === selectedSurahIndex ? "#24315f" : "transparent",
+                  color: "#fff",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  textAlign: "left",
+                }}
+              >
+                <span>
+                  {s.surahNumber}. {s.name}
+                </span>
+                <span style={{ fontSize: "1.1rem", opacity: 0.9 }}>
+                  {s.arabicName}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* CONTROLS CARD */}
+        <div
+          style={{
+            marginTop: 20,
+            padding: 12,
+            borderRadius: 10,
+            background: "#151515",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          {/* Mode toggle */}
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setMode("learning")}
+              disabled={mode === "learning"}
+            >
+              Learning Mode
+            </button>
+            <button
+              onClick={() => setMode("practice")}
+              disabled={mode === "practice"}
+            >
+              Practice Mode
+            </button>
+
+            <ModeInfoIcon />
+          </div>
+
+          {/* Play controls (depend on mode) */}
+          <div style={{ display: "flex", gap: 8 }}>
+            {mode === "learning" && (
+              <>
+                <button onClick={startLearning}>Play Surah</button>
+                <button onClick={pauseAudio}>Pause</button>
+              </>
+            )}
+
+            {mode === "practice" && (
+              <>
+                <button onClick={startPractice}>Start Practice</button>
+                {isUserTurn && (
+                  <button onClick={nextAyahPractice}>Next Ayah</button>
+                )}
+              </>
+            )}
+          </div>
+
+          {mode === "practice" && isUserTurn && (
+            <p style={{ margin: 0, fontSize: 13, opacity: 0.85 }}>
+              Your turn: recite this ayah, then press &quot;Next Ayah&quot;.
+            </p>
+          )}
+        </div>
+
+        {/* AUDIO ELEMENT */}
+        <audio
+          ref={audioRef}
+          onEnded={handleAudioEnded}
+          onTimeUpdate={handleTimeUpdate}
+          style={{ display: "none" }}
+        />
+
+        {/* AYAH PANEL */}
+        <div
+          style={{
+            marginTop: 24,
+            padding: 16,
+            borderRadius: 10,
+            background: "#181818",
+            maxHeight: 420,
+            overflowY: "auto",
+            boxSizing: "border-box",
+          }}
+        >
+          {ayahs.map((ayah, idx) => {
+            const highlightInLearning =
+              mode === "learning" && idx === currentAyahIndex;
+            const highlightInPractice =
+              mode === "practice" && idx === currentAyahIndex;
+            const isCurrent = highlightInLearning || highlightInPractice;
+
+            return (
+              <div
+                key={ayah.number}
+                ref={(el) => (ayahRefs.current[idx] = el)}
+                onClick={() => handleAyahClick(idx)}
+                onMouseEnter={() => setHoveredAyahIndex(idx)}
+                onMouseLeave={() => setHoveredAyahIndex(null)}
+                style={{
+                  padding: "8px 10px",
+                  marginBottom: 6,
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  background: isCurrent
+                    ? "#24315f"
+                    : hoveredAyahIndex === idx
+                    ? "#202637"
+                    : "transparent",
+                  border: isCurrent
+                    ? "1px solid #3f5bff"
+                    : hoveredAyahIndex === idx
+                    ? "1px solid #333a55"
+                    : "1px solid transparent",
+                  textAlign: "right",
+                  transition:
+                    "background 0.15s ease, border-color 0.15s ease, transform 0.1s ease",
+                }}
+              >
+                {/* Arabic */}
+                <div style={{ fontSize: "1.4rem" }}>{ayah.text_ar}</div>
+
+                {/* Transliteration */}
+                {ayah.transliteration && (
+                  <div
+                    style={{
+                      fontSize: "0.85rem",
+                      opacity: 0.9,
+                      textAlign: "left",
+                      marginTop: 4,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {ayah.transliteration}
+                  </div>
+                )}
+
+                {/* English translation */}
+                {ayah.english && (
+                  <div
+                    style={{
+                      fontSize: "0.8rem",
+                      opacity: 0.8,
+                      textAlign: "left",
+                      marginTop: 4,
+                    }}
+                  >
+                    {ayah.number}. {ayah.english}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
