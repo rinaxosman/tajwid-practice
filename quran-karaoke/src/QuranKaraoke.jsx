@@ -3,6 +3,99 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchSelectedSurahs } from "./quranApi";
 
+function ModeInfoIcon() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      {/* Info icon */}
+      <span
+        onClick={() => setOpen(true)}
+        style={{
+          marginLeft: 8,
+          fontSize: 13,
+          cursor: "pointer",
+          opacity: 0.7,
+          border: "1px solid #444",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 18,
+          height: 18,
+          borderRadius: "50%",
+          userSelect: "none",
+        }}
+      >
+        i
+      </span>
+
+      {/* Popup Overlay */}
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.55)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#1a1a1a",
+              padding: "20px 22px",
+              borderRadius: 10,
+              border: "1px solid #333",
+              width: "85%",
+              maxWidth: 420,
+              boxShadow: "0 6px 20px rgba(0,0,0,0.4)",
+            }}
+          >
+            <h3 style={{ margin: "0 0 10px", textAlign: "center" }}>
+              Mode Guide
+            </h3>
+
+            <p style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.5 }}>
+              <strong>Learning Mode</strong> – Plays the full surah and
+              automatically highlights each ayah as it’s recited.
+            </p>
+
+            <p style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.5 }}>
+              <strong>Practice Mode</strong> – Plays one ayah at a time.
+              Then it's your turn to recite before moving on.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              style={{
+                marginTop: 12,
+                width: "100%",
+                padding: "8px 0",
+                borderRadius: 6,
+                background: "#2f3cff",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer",
+                fontWeight: 500,
+                fontSize: 14,
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+
+
 export default function QuranKaraoke() {
   const [surahs, setSurahs] = useState([]);
   const [selectedSurahIndex, setSelectedSurahIndex] = useState(0);
@@ -18,33 +111,22 @@ export default function QuranKaraoke() {
   // For learning mode highlighting – per-ayah durations
   const [ayahDurations, setAyahDurations] = useState([]);
 
+  // Hover state for ayah list
+  const [hoveredAyahIndex, setHoveredAyahIndex] = useState(null);
+
   const audioRef = useRef(null);
 
-  // ⭐ refs for each ayah to auto-scroll into view
+  // refs for each ayah to auto-scroll into view
   const ayahRefs = useRef([]);
 
   const selectedSurah = surahs[selectedSurahIndex] || null;
   const ayahs = selectedSurah?.ayahs || [];
-
-  const reciterSelectStyle = {
-    padding: "6px 14px",
-    fontSize: 13,
-    borderRadius: 12,
-    border: "1px solid #3b3b3b",
-    background: "#111",
-    color: "#fff",
-    outline: "none",
-    cursor: "pointer",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
-    appearance: "none",
-  };
 
   const reciterOptionStyle = {
     backgroundColor: "#111",
     color: "#fff",
     padding: "10px",
   };
-
 
   // Load surahs initially + whenever reciter changes
   useEffect(() => {
@@ -122,13 +204,13 @@ export default function QuranKaraoke() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSurahIndex, surahs.length]);
 
-  // ⭐ Auto-scroll the current ayah into view
+  // Auto-scroll the current ayah into view
   useEffect(() => {
     const el = ayahRefs.current[currentAyahIndex];
     if (el) {
       el.scrollIntoView({
         behavior: "smooth",
-        block: "nearest"
+        block: "nearest",
       });
     }
   }, [currentAyahIndex]);
@@ -145,7 +227,7 @@ export default function QuranKaraoke() {
     setIsUserTurn(false);
 
     audio.src = ayah.audioUrl;
-    audio.play().catch(() => { });
+    audio.play().catch(() => {});
   }
 
   function handleAudioEnded() {
@@ -190,7 +272,7 @@ export default function QuranKaraoke() {
     setCurrentAyahIndex(0);
 
     audio.src = selectedSurah.fullAudioUrl;
-    audio.play().catch(() => { });
+    audio.play().catch(() => {});
   }
 
   // Practice mode: start from ayah 0
@@ -215,6 +297,13 @@ export default function QuranKaraoke() {
 
   function pauseAudio() {
     if (audioRef.current) audioRef.current.pause();
+  }
+
+  // Click an ayah to start practice from there
+  function handleAyahClick(index) {
+    if (!selectedSurah) return;
+    setMode("practice");
+    playAyah(index);
   }
 
   // previous / next surah buttons
@@ -258,7 +347,7 @@ export default function QuranKaraoke() {
         maxWidth: 640,
         margin: "0 auto",
         padding: 24,
-        fontFamily: "system-ui, sans-serif"
+        fontFamily: "system-ui, sans-serif",
       }}
     >
       {/* HEADER */}
@@ -270,60 +359,65 @@ export default function QuranKaraoke() {
           textAlign: "center",
           marginTop: 0,
           fontSize: 14,
-          opacity: 0.8
+          opacity: 0.8,
         }}
       >
         Learn, recite, and understand the Qur’an ayah by ayah.
       </p>
 
-{/* RECITER ROW */}
-<div
-  style={{
-    marginTop: 12,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-    fontSize: 14
-  }}
->
-  <span style={{ opacity: 0.85 }}>Reciter:</span>
-<select
-  value={reciter}
-  onChange={(e) => setReciter(e.target.value)}
-  style={{
-    padding: "6px 14px",
-    fontSize: 13,
-    borderRadius: 9999,
-    border: "1px solid #3b3b3b",
-    background: "#111",
-    color: "#fff",
-    outline: "none",
-    cursor: "pointer",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
-    appearance: "none",
-    WebkitAppearance: "none",
-    MozAppearance: "none",
-    backgroundImage:
-      "linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%)",
-    backgroundPosition: "calc(100% - 14px) 50%, calc(100% - 9px) 50%",
-    backgroundSize: "6px 6px, 6px 6px",
-    backgroundRepeat: "no-repeat",
-    paddingRight: 28,
-  }}
->
-  <option value="1" style={reciterOptionStyle}>Mishary Al-Afasy</option>
-  <option value="2" style={reciterOptionStyle}>Abu Bakr Al Shatri</option>
-  <option value="3" style={reciterOptionStyle}>Nasser Al Qatami</option>
-  <option value="4" style={reciterOptionStyle}>Yasser Al-Dosari</option>
-  <option value="5" style={reciterOptionStyle}>Hani Ar Rifai</option>
-</select>
-
-
-
-</div>
-
-
+      {/* RECITER ROW */}
+      <div
+        style={{
+          marginTop: 12,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 8,
+          fontSize: 14,
+        }}
+      >
+        <span style={{ opacity: 0.85 }}>Reciter:</span>
+        <select
+          value={reciter}
+          onChange={(e) => setReciter(e.target.value)}
+          style={{
+            padding: "6px 14px",
+            fontSize: 13,
+            borderRadius: 9999,
+            border: "1px solid #3b3b3b",
+            background: "#111",
+            color: "#fff",
+            outline: "none",
+            cursor: "pointer",
+            boxShadow: "0 3px 8px rgba(0,0,0,0.35)",
+            appearance: "none",
+            WebkitAppearance: "none",
+            MozAppearance: "none",
+            backgroundImage:
+              "linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%)",
+            backgroundPosition: "calc(100% - 14px) 50%, calc(100% - 9px) 50%",
+            backgroundSize: "6px 6px, 6px 6px",
+            backgroundRepeat: "no-repeat",
+            paddingRight: 28,
+          }}
+        >
+          <option value="1" style={reciterOptionStyle}>
+            Mishary Al-Afasy
+          </option>
+          <option value="2" style={reciterOptionStyle}>
+            Abu Bakr Al Shatri
+          </option>
+          <option value="3" style={reciterOptionStyle}>
+            Nasser Al Qatami
+          </option>
+          <option value="4" style={reciterOptionStyle}>
+            Yasser Al-Dosari
+          </option>
+          <option value="5" style={reciterOptionStyle}>
+            Hani Ar Rifai
+          </option>
+        </select>
+      </div>
 
       {/* SURAH NAV BAR */}
       <div
@@ -331,7 +425,7 @@ export default function QuranKaraoke() {
           marginTop: 20,
           display: "flex",
           alignItems: "center",
-          gap: 8
+          gap: 8,
         }}
       >
         <button
@@ -368,7 +462,7 @@ export default function QuranKaraoke() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 10
+          gap: 10,
         }}
       >
         {/* Mode toggle */}
@@ -385,7 +479,11 @@ export default function QuranKaraoke() {
           >
             Practice Mode
           </button>
+
+          <ModeInfoIcon />
+
         </div>
+        
 
         {/* Play controls (depend on mode) */}
         <div style={{ display: "flex", gap: 8 }}>
@@ -429,7 +527,7 @@ export default function QuranKaraoke() {
           borderRadius: 10,
           background: "#181818",
           maxHeight: 420,
-          overflowY: "auto"
+          overflowY: "auto",
         }}
       >
         {ayahs.map((ayah, idx) => {
@@ -442,22 +540,34 @@ export default function QuranKaraoke() {
           return (
             <div
               key={ayah.number}
-              ref={(el) => (ayahRefs.current[idx] = el)} // ⭐ attach ref
+              ref={(el) => (ayahRefs.current[idx] = el)}
+              onClick={() => handleAyahClick(idx)}
+              onMouseEnter={() => setHoveredAyahIndex(idx)}
+              onMouseLeave={() => setHoveredAyahIndex(null)}
               style={{
                 padding: "8px 10px",
                 marginBottom: 6,
                 borderRadius: 8,
-                background: isCurrent ? "#24315f" : "transparent",
+                cursor: "pointer",
+                background: isCurrent
+                  ? "#24315f"
+                  : hoveredAyahIndex === idx
+                  ? "#202637"
+                  : "transparent",
                 border: isCurrent
                   ? "1px solid #3f5bff"
+                  : hoveredAyahIndex === idx
+                  ? "1px solid #333a55"
                   : "1px solid transparent",
-                textAlign: "right"
+                textAlign: "right",
+                transition:
+                  "background 0.15s ease, border-color 0.15s ease, transform 0.1s ease",
               }}
             >
               {/* Arabic */}
               <div style={{ fontSize: "1.4rem" }}>{ayah.text_ar}</div>
 
-              {/* ⭐ Transliteration (NEW) */}
+              {/* Transliteration */}
               {ayah.transliteration && (
                 <div
                   style={{
@@ -465,7 +575,7 @@ export default function QuranKaraoke() {
                     opacity: 0.9,
                     textAlign: "left",
                     marginTop: 4,
-                    fontStyle: "italic"
+                    fontStyle: "italic",
                   }}
                 >
                   {ayah.transliteration}
@@ -479,7 +589,7 @@ export default function QuranKaraoke() {
                     fontSize: "0.8rem",
                     opacity: 0.8,
                     textAlign: "left",
-                    marginTop: 4
+                    marginTop: 4,
                   }}
                 >
                   {ayah.number}. {ayah.english}
