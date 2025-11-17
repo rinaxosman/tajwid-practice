@@ -65,8 +65,8 @@ function ModeInfoIcon() {
             </p>
 
             <p style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.5 }}>
-              <strong>Practice Mode</strong> – Plays one ayah at a time.
-              Then it's your turn to recite before moving on.
+              <strong>Practice Mode</strong> – Plays one ayah at a time. Then
+              it&apos;s your turn to recite before moving on.
             </p>
 
             <button
@@ -94,8 +94,6 @@ function ModeInfoIcon() {
   );
 }
 
-
-
 export default function QuranKaraoke() {
   const [surahs, setSurahs] = useState([]);
   const [selectedSurahIndex, setSelectedSurahIndex] = useState(0);
@@ -113,6 +111,9 @@ export default function QuranKaraoke() {
 
   // Hover state for ayah list
   const [hoveredAyahIndex, setHoveredAyahIndex] = useState(null);
+
+  // Surah picker open/close
+  const [surahPickerOpen, setSurahPickerOpen] = useState(false);
 
   const audioRef = useRef(null);
 
@@ -308,13 +309,21 @@ export default function QuranKaraoke() {
 
   // previous / next surah buttons
   function goToPreviousSurah() {
+    setSurahPickerOpen(false);
     setSelectedSurahIndex((prev) => (prev > 0 ? prev - 1 : prev));
   }
 
   function goToNextSurah() {
+    setSurahPickerOpen(false);
     setSelectedSurahIndex((prev) =>
       prev < surahs.length - 1 ? prev + 1 : prev
     );
+  }
+
+  // choose surah from picker
+  function handlePickSurah(index) {
+    setSelectedSurahIndex(index);
+    setSurahPickerOpen(false);
   }
 
   if (loading) {
@@ -436,10 +445,28 @@ export default function QuranKaraoke() {
           ← Previous
         </button>
 
-        <div style={{ flex: 1, textAlign: "center" }}>
+        <div
+          style={{
+            flex: 1,
+            textAlign: "center",
+            cursor: "pointer",
+            padding: "4px 0",
+          }}
+          onClick={() => setSurahPickerOpen((open) => !open)}
+        >
           <div style={{ fontSize: "1.9rem" }}>{selectedSurah.arabicName}</div>
           <div style={{ fontSize: "0.95rem", opacity: 0.8 }}>
             Surah {selectedSurah.surahNumber}: {selectedSurah.name}
+          </div>
+          <div
+            style={{
+              marginTop: 2,
+              fontSize: 11,
+              opacity: 0.6,
+              color: "#5574e4ff",
+            }}
+          >
+            Click to choose a surah
           </div>
         </div>
 
@@ -451,6 +478,50 @@ export default function QuranKaraoke() {
           Next →
         </button>
       </div>
+
+      {/* SURAH PICKER DROPDOWN */}
+      {surahPickerOpen && (
+        <div
+          style={{
+            marginTop: 10,
+            background: "#151515",
+            borderRadius: 10,
+            border: "1px solid #333",
+            maxHeight: 260,
+            overflowY: "auto",
+            padding: 8,
+          }}
+        >
+          {surahs.map((s, idx) => (
+            <button
+              key={s.surahNumber}
+              onClick={() => handlePickSurah(idx)}
+              style={{
+                width: "100%",
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: "none",
+                background:
+                  idx === selectedSurahIndex ? "#24315f" : "transparent",
+                color: "#fff",
+                cursor: "pointer",
+                fontSize: 13,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                textAlign: "left",
+              }}
+            >
+              <span>
+                {s.surahNumber}. {s.name}
+              </span>
+              <span style={{ fontSize: "1.1rem", opacity: 0.9 }}>
+                {s.arabicName}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* CONTROLS CARD */}
       <div
@@ -481,9 +552,7 @@ export default function QuranKaraoke() {
           </button>
 
           <ModeInfoIcon />
-
         </div>
-        
 
         {/* Play controls (depend on mode) */}
         <div style={{ display: "flex", gap: 8 }}>
@@ -528,6 +597,7 @@ export default function QuranKaraoke() {
           background: "#181818",
           maxHeight: 420,
           overflowY: "auto",
+          boxSizing: "border-box",
         }}
       >
         {ayahs.map((ayah, idx) => {
