@@ -129,12 +129,28 @@ export default function QuranKaraoke() {
     padding: "10px",
   };
 
+  // --- simple viewport flag for responsive controls ---
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    function handleResize() {
+      setIsMobile(window.innerWidth < 768);
+    }
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  // ----------------------------------------------------
+
   // Load surahs initially + whenever reciter changes
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
-               setError(null);
+        setError(null);
 
         const data = await fetchSelectedSurahs(reciter);
         setSurahs(data);
@@ -376,7 +392,6 @@ export default function QuranKaraoke() {
             alignItems: "flex-end",
             gap: 16,
             marginBottom: 12,
-            flexWrap: "wrap", // allow wrap on small screens
           }}
         >
           {/* Title + subtitle */}
@@ -482,9 +497,7 @@ export default function QuranKaraoke() {
             }}
             onClick={() => setSurahPickerOpen((open) => !open)}
           >
-            <div style={{ fontSize: "1.9rem" }}>
-              {selectedSurah.arabicName}
-            </div>
+            <div style={{ fontSize: "1.9rem" }}>{selectedSurah.arabicName}</div>
             <div style={{ fontSize: "0.95rem", opacity: 0.8 }}>
               Surah {selectedSurah.surahNumber}: {selectedSurah.name}
             </div>
@@ -565,70 +578,170 @@ export default function QuranKaraoke() {
             gap: 8,
           }}
         >
-          {/* Top row: mode toggle (left) + transport controls (right) */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 16,
-              flexWrap: "wrap", // wrap on small screens
-            }}
-          >
-            {/* Mode toggle */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 12, opacity: 0.7 }}>Mode</span>
-
-              <button
-                onClick={() => setMode("learning")}
-                disabled={mode === "learning"}
+          {/* Desktop / tablet layout */}
+          {!isMobile && (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 16,
+                }}
               >
-                Learning
-              </button>
+                {/* Mode toggle */}
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <span style={{ fontSize: 12, opacity: 0.7 }}>Mode</span>
 
-              <button
-                onClick={() => setMode("practice")}
-                disabled={mode === "practice"}
-              >
-                Practice
-              </button>
+                  <button
+                    onClick={() => setMode("learning")}
+                    disabled={mode === "learning"}
+                  >
+                    Learning
+                  </button>
 
-              <ModeInfoIcon />
-            </div>
+                  <button
+                    onClick={() => setMode("practice")}
+                    disabled={mode === "practice"}
+                  >
+                    Practice
+                  </button>
 
-            {/* Transport controls */}
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {mode === "learning" && (
-                <>
-                  <button onClick={startLearning}>▶ Play surah</button>
-                  <button onClick={pauseAudio}>⏸ Pause</button>
-                </>
-              )}
+                  <ModeInfoIcon />
+                </div>
+
+                {/* Transport controls */}
+                <div style={{ display: "flex", gap: 8 }}>
+                  {mode === "learning" && (
+                    <>
+                      <button onClick={startLearning}>▶ Play surah</button>
+                      <button onClick={pauseAudio}>⏸ Pause</button>
+                    </>
+                  )}
+
+                  {mode === "practice" && (
+                    <>
+                      <button onClick={startPractice}>▶ Play ayah</button>
+                      {isUserTurn && (
+                        <button onClick={nextAyahPractice}>
+                          Next ayah →
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
 
               {mode === "practice" && (
-                <>
-                  <button onClick={startPractice}>▶ Play ayah</button>
-                  {isUserTurn && (
-                    <button onClick={nextAyahPractice}>Next ayah →</button>
-                  )}
-                </>
+                <p
+                  style={{
+                    margin: 0,
+                    marginTop: 4,
+                    fontSize: 12,
+                    opacity: 0.8,
+                  }}
+                >
+                  In practice mode, one ayah plays at a time. Recite it, then
+                  press <strong>Next ayah</strong>.
+                </p>
               )}
-            </div>
-          </div>
+            </>
+          )}
 
-          {/* Helper text for practice mode */}
-          {mode === "practice" && (
-            <p
-              style={{
-                margin: 0,
-                marginTop: 4,
-                fontSize: 12,
-                opacity: 0.8,
-              }}
-            >
-              In practice mode, one ayah plays at a time. Recite it, then press{" "}
-              <strong>Next ayah</strong>.
-            </p>
+          {/* Mobile layout */}
+          {isMobile && (
+            <>
+              {/* Mode row */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 4,
+                  flexWrap: "wrap",
+                }}
+              >
+                <span style={{ fontSize: 12, opacity: 0.7 }}>Mode</span>
+
+                <button
+                  onClick={() => setMode("learning")}
+                  disabled={mode === "learning"}
+                >
+                  Learning
+                </button>
+
+                <button
+                  onClick={() => setMode("practice")}
+                  disabled={mode === "practice"}
+                >
+                  Practice
+                </button>
+
+                <ModeInfoIcon />
+              </div>
+
+              {/* Play / pause row */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 8,
+                }}
+              >
+                {mode === "learning" && (
+                  <>
+                    <button
+                      onClick={startLearning}
+                      style={{ flex: 1, justifyContent: "center" }}
+                    >
+                      ▶ Play surah
+                    </button>
+                    <button
+                      onClick={pauseAudio}
+                      style={{ flex: 1, justifyContent: "center" }}
+                    >
+                      ⏸ Pause
+                    </button>
+                  </>
+                )}
+
+                {mode === "practice" && (
+                  <>
+                    <button
+                      onClick={startPractice}
+                      style={{ flex: 1, justifyContent: "center" }}
+                    >
+                      ▶ Play ayah
+                    </button>
+                    <button
+                      onClick={nextAyahPractice}
+                      disabled={!isUserTurn}
+                      style={{ flex: 1, justifyContent: "center" }}
+                    >
+                      Next ayah →
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {mode === "practice" && (
+                <p
+                  style={{
+                    margin: 0,
+                    marginTop: 4,
+                    fontSize: 12,
+                    opacity: 0.8,
+                    textAlign: "center",
+                  }}
+                >
+                  One ayah plays at a time. Recite it, then tap{" "}
+                  <strong>Next ayah</strong>.
+                </p>
+              )}
+            </>
           )}
         </div>
 
